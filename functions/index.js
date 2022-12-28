@@ -1,5 +1,5 @@
 const functions = require("firebase-functions");
-const TwitterApi = require("twitter-api-v2");
+import { TwitterApi } from "twitter-api-v2";
 
 const getJPDayText = (weekNumber) => {
   if (weekNumber == 0) {
