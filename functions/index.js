@@ -44,14 +44,14 @@ const getTweetText = (weekNumber) => {
 exports.mondayNewgameTwitterBot = functions.pubsub.schedule('1 1 * * *')
   .timeZone('Asia/Tokyo')
   .onRun(async (context) => {
-    const twitterClient = new TwitterApi(functions.config().twitterToken);
+    const twitterClient = new TwitterApi(functions.config().twitter.token);
     const date = new Date().toLocaleString({ timeZone: 'Asia/Tokyo' });
     await twitterClient.v1.tweet(getTweetText(date.getDay()));
   });
 
 exports.mondayNewgameTwitterBotHTTP = functions.https.onRequest(async (request, response) => {
   functions.logger.info(request);
-  const twitterClient = new TwitterApi(functions.config().twitterToken);
+  const twitterClient = new TwitterApi(functions.config().twitter.token);
   const date = new Date().toLocaleString({ timeZone: 'Asia/Tokyo' });
   await twitterClient.v1.tweet(getTweetText(date.getDay()));
   response.send("hi!");
