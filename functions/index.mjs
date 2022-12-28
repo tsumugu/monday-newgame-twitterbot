@@ -38,7 +38,7 @@ const getkashiText = (weekNumber) => {
 };
 
 const getTweetText = (weekNumber) => {
-  return `${getJPDayText(weekNumber)}曜日が街にやってくる(絶望)\n\n\n${getkashiText(weekNumber)}\n\n\n#newgame #時報"`;
+  return `${getJPDayText(weekNumber)}曜日が街にやってくる(絶望)\n\n\n${getkashiText(weekNumber)}\n\n\n#newgame #時報`;
 };
 
 const tweet = async () => {
@@ -58,8 +58,8 @@ export const mondayNewgameTwitterBot = functions.pubsub.schedule('1 1 * * *')
     await tweet();
   });
 
-export const mondayNewgameTwitterBotHTTP = functions.https.onRequest(async (request, response) => {
-  functions.logger.info(request);
-  await tweet();
-  response.send("hi!");
-});
+// export const mondayNewgameTwitterBotHTTP = functions.https.onRequest(async (request, response) => {
+//   functions.logger.info(request);
+//   await tweet();
+//   response.send("hi!");
+// });
