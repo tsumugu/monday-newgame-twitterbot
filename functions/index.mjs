@@ -41,6 +41,8 @@ const getTweetText = (weekNumber) => {
   return `${getJPDayText(weekNumber)}曜日が街にやってくる(絶望)\n\n\n${getkashiText(weekNumber)}\n\n\n#newgame #時報`;
 };
 
+const jstNow = new Date(Date.now() + ((new Date().getTimezoneOffset() + (9 * 60)) * 60 * 1000));
+
 const tweet = async () => {
   const twitterClient = new TwitterApi({
     appKey: functions.config().twitter.key,
@@ -48,18 +50,17 @@ const tweet = async () => {
     accessToken: functions.config().twitter.accesstoken,
     accessSecret: functions.config().twitter.accesssecret,
   });
-  const date = new Date(new Date().toLocaleString({ timeZone: 'Asia/Tokyo' }));
-  await twitterClient.v1.tweet(getTweetText(date.getDay()));
+  await twitterClient.v1.tweet(getTweetText(jstNow.getDay()));
 };
 
-export const mondayNewgameTwitterBot = functions.pubsub.schedule('1 1 * * *')
+export const mondayNewgameTwitterBot = functions.pubsub.schedule('0 0 * * *')
   .timeZone('Asia/Tokyo')
   .onRun(async (context) => {
     await tweet();
   });
 
-// export const mondayNewgameTwitterBotHTTP = functions.https.onRequest(async (request, response) => {
-//   functions.logger.info(request);
-//   await tweet();
-//   response.send("hi!");
-// });
+export const mondayNewgameTwitterBotHTTP = functions.https.onRequest(async (request, response) => {
+  functions.logger.info(jstNow, jstNow.getDay(), getTweetText(jstNow.getDay()));
+  //await tweet();
+  response.send(getTweetText(jstNow.getDay()));
+});
