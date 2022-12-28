@@ -48,3 +48,11 @@ exports.mondayNewgameTwitterBot = functions.pubsub.schedule('1 1 * * *')
     const date = new Date().toLocaleString({ timeZone: 'Asia/Tokyo' });
     await twitterClient.v1.tweet(getTweetText(date.getDay()));
   });
+
+exports.mondayNewgameTwitterBotHTTP = functions.https.onRequest(async (request, response) => {
+  functions.logger.info(request);
+  const twitterClient = new TwitterApi(functions.config().twitterToken);
+  const date = new Date().toLocaleString({ timeZone: 'Asia/Tokyo' });
+  await twitterClient.v1.tweet(getTweetText(date.getDay()));
+  response.send("hi!");
+});
