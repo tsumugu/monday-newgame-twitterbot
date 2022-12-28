@@ -1,4 +1,4 @@
-const functions = require("firebase-functions");
+import * as functions from "firebase-functions";
 import { TwitterApi } from "twitter-api-v2";
 
 const getJPDayText = (weekNumber) => {
@@ -41,18 +41,25 @@ const getTweetText = (weekNumber) => {
   return `${getJPDayText(weekNumber)}曜日が街にやってくる(絶望)\n\n\n${getkashiText(weekNumber)}\n\n\n#newgame #時報"`;
 };
 
-exports.mondayNewgameTwitterBot = functions.pubsub.schedule('1 1 * * *')
+const tweet = async () => {
+  const twitterClient = new TwitterApi({
+    appKey: functions.config().twitter.key,
+    appSecret: functions.config().twitter.secret,
+    accessToken: functions.config().twitter.accesstoken,
+    accessSecret: functions.config().twitter.accesssecret,
+  });
+  const date = new Date(new Date().toLocaleString({ timeZone: 'Asia/Tokyo' }));
+  await twitterClient.v1.tweet(getTweetText(date.getDay()));
+};
+
+export const mondayNewgameTwitterBot = functions.pubsub.schedule('1 1 * * *')
   .timeZone('Asia/Tokyo')
   .onRun(async (context) => {
-    const twitterClient = new TwitterApi(functions.config().twitter.token);
-    const date = new Date().toLocaleString({ timeZone: 'Asia/Tokyo' });
-    await twitterClient.v1.tweet(getTweetText(date.getDay()));
+    await tweet();
   });
 
-exports.mondayNewgameTwitterBotHTTP = functions.https.onRequest(async (request, response) => {
+export const mondayNewgameTwitterBotHTTP = functions.https.onRequest(async (request, response) => {
   functions.logger.info(request);
-  const twitterClient = new TwitterApi(functions.config().twitter.token);
-  const date = new Date().toLocaleString({ timeZone: 'Asia/Tokyo' });
-  await twitterClient.v1.tweet(getTweetText(date.getDay()));
+  await tweet();
   response.send("hi!");
 });
